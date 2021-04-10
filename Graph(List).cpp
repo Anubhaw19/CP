@@ -5,6 +5,7 @@ class graph{
 int V;
 list<pair<int,int>> *l;
 
+
 public:
 graph(int V)
 {
@@ -39,7 +40,7 @@ void printGraph()
  // Breadth first search
   void BFS(int s)
     {
-        cout<<"breadth first traversal: "<<endl;
+        cout<<endl<<"breadth first search: "<<endl;
        bool *visit=new bool[V];
        for(int i=0;i<V;i++)
        visit[i]=false; 
@@ -69,11 +70,52 @@ void printGraph()
        }
     }
 
+    void DFS_until(int s,bool visited[])
+    {
+
+     visited[s]=true;
+     cout<<s<<",";
+
+     for(auto x:l[s])
+     {
+         if(!visited[x.first])
+         DFS_until(x.first,visited);
+     }
+        
+    }
+
+    void DFS_connected(int s)
+    {
+        cout<<endl<<"depth first search:(connected graph)"<<endl;
+        bool visited[V];
+        for(int i=0;i<V;i++)
+        visited[i]=false;
+
+        //for connected graphs
+        if(!visited[s])
+        DFS_until(s,visited);
+
+    }
+    void DFS_disconnected()
+    {
+         cout<<endl<<"depth first search:(disconnected graph)"<<endl;
+        bool visited[V];
+        for(int i=0;i<V;i++)
+        visited[i]=false;
+
+        /** for disconnected graphs*/
+        for(int j=0;j<V;j++)
+        {
+            if(!visited[j])
+            DFS_until(j,visited);
+        }
+    }
+
 };
 int main()
 {
-   
-graph g(6);
+   int size=6;
+graph g(size);
 g.addEdge(0,1,10);
 g.addEdge(0,2,20);
 g.addEdge(0,3,20);
@@ -88,6 +130,8 @@ g.addEdge(4,0,400);
 
 g.printGraph();
 g.BFS(2);
+g.DFS_connected(5);
+g.DFS_disconnected();
 
 return 0;
 
