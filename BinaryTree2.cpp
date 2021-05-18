@@ -6,7 +6,6 @@ public:
     int data;
     Node *left;
     Node *right;
-
     // constructors
     Node(int value)
     {
