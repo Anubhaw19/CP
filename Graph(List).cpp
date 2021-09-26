@@ -4,13 +4,14 @@ using namespace std;
 class graph{
 int V;
 list<pair<int,int>> *l;
-
+// or list<int> *l; // for un-weighted graph
 
 public:
 graph(int V)
 {
     this->V=V;
     l=new list<pair<int,int>>[V];
+    //or l=new list<int>[n]; //  for un-weighted graph
 }
 // adding a new node to the Adjacency List 
 void addEdge(int u, int v,int s)
@@ -20,8 +21,8 @@ void addEdge(int u, int v,int s)
         // l[u].first=v;
         // l[u].second=s;
     
-    // l[u].push_back(v);
-    //  l[v].push_back(u);
+    // l[u].push_back(v);  for un-weighted graph
+    //  l[v].push_back(u);   for un-weighted graph and bi-directional
 }
 void printGraph()
 {
