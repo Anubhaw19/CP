@@ -4,7 +4,7 @@ using namespace std;
 /*
 input: 
 string A="agbcba";
-minimum number of deletion for making palindrominc string : 1 (i.e :'g')
+minimum number of deletion (or Insertion) for making palindrominc string : 1 (i.e :'g')
 palindromic string after minimum deletion ="abcba" (i.e : longest palindromic subsequence)
 
 output:
