@@ -39,7 +39,7 @@ int solve(Node *root, int &res)
 
 int main()
 {
-    int res = INT_MAX;
+    int res = INT_MIN;
     Node *r = NULL;
     //TODO: insert node in the tree
     cout << solve(r, res);
