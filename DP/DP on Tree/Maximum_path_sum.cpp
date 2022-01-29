@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-int static t[11][51]; // 0<e<1=0 , 0<=f<=50
+int static t[11][51]; // 0<e<=10 , 0<=f<=50
 /*
 Binary Tree:
 Maximum Path Sum | From any node to any node
@@ -28,6 +28,10 @@ int solve(Node *root, int &res)
     int ans = max(temp, l + r + root->data);            // if current node is the root node for the Maximum Path Sum
     res = max(res, ans);
 
+// if(temp>0)
+// return temp;
+// else
+// return 0; 
     return temp;
 }
 
