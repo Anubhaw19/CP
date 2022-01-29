@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-int static t[11][51];
+int static t[11][51]; // 0<e<1=0 , 0<=f<=50
 /*
 EGG Droping Problem
 
@@ -21,7 +21,24 @@ int solve(int e, int f)
     int m = INT_MAX;
     for (int k = 1; k <= f; k++)
     {
-        int temp = 1 + max(solve(e - 1, k - 1), solve(e, f - k)); // as calculating minimum no. of attempts for worst case (that's why max())
+        int c1, c2;
+        if (t[e - 1][k - 1] != -1)
+            c1 = t[e - 1][k - 1];
+        else
+        {
+            c1 = solve(e - 1, k - 1);
+            t[e - 1][k - 1] = c1;
+        }
+        if (t[e][f - k] != -1)
+            c2 = t[e][f - k];
+        else
+        {
+            c2 = solve(e, f - k);
+            t[e][f - k] = c2;
+        }
+
+        // int temp = 1 + max(solve(e - 1, k - 1), solve(e, f - k));
+        int temp = 1 + max(c1, c2); // as calculating minimum no. of attempts for worst case (that's why max())
 
         m = min(m, temp);
     }
