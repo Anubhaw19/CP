@@ -201,3 +201,11 @@ Insert Into Employee Values (1013, 'Vandy', 60);
 Select * From Department;
 Select * From Employee
 Delete From Department Where Id = 40;
+
+
+*****************************FLASHBACK*************************************************
+FLASHBACK TABLE <Table-Name> TO TIMESTAMP (SYSTIMESTAMP - INTERVAL '1' YEAR);
+FLASHBACK TABLE <TABLE-NAME> TO BEFORE DROP;
+FLASHBACK TABLE <TABLE-NAME> TO BEFORE DROP RENAME TO <NEW-TABLE-NAME>
+// for flashback to work enable ROW Movement 
+ALTER TABLE <TABLE-NAME> ENABLE ROW MOVEMENT;
