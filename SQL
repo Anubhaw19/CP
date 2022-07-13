@@ -1,0 +1,119 @@
+// Table Creating Methodolgies
+ Create :  Can Be Used To Create Table,Views,Materlized Views,Index,Synomun,Procedures,Function
+ Drop Table Employee;
+ Insert Into Employee Values(102,'Jagdish','IT',8888,'Male',30,'Banagalore');
+ select * from employee;
+ 
+Create Table Employee ( Id Number , Name Varchar(15),  Department Varchar(10),  Salary Number(8, 2),
+Gender Varchar(10), Age Number, City Varchar(10));
+desc employee;
+drop table employee_dup;
+Create Table Employee_Dup As Select * From Employee Where 1=0; // Only Structure Will Be Created
+select * from employee_dup;
+Create Table Employee_Dup As Select * From Employee;     Structure And Data Will Also Be Copied
+Select * From Employee_Dup;
+
+
+
+    
+*******************************************************************************
+// Applying Column Level Constraint
+Primary key,Unique,Not null,Check,Foreign Key
+   Drop Table Employee ;
+  Create Table Employee ( Id Number Primary Key, Name Varchar(15),  Department Varchar(10),  Salary Number(8, 2),
+  Gender Varchar(10), Age Number, City Varchar(10));
+  desc employee;
+  
+  1. Select * From User_Constraints where table_name='EMPLOYEE';
+  
+    
+  
+  
+  // Applying  Table Level Constraint
+  Drop Table Employee ;
+  Create Table Employee ( Id Number , Name Varchar(15),  Department Varchar(10),  Salary Number(8, 2),
+  Gender Varchar(10), Age Number, City Varchar(10),      Primary Key(Id));
+  Or
+  
+  Create Table Employee ( Id Number , Name Varchar(15),  Department Varchar(10),  Salary Number(8, 2),
+  Gender Varchar(10), Age Number, City Varchar(10),CONSTRAINT pk_id Primary Key(Id));
+  
+  
+  
+  ******************************Using Alter Command***************************************************
+   Create Table Employee ( Id Number , Name Varchar(15),  Department Varchar(10),  Salary Number(8, 2),
+  Gender Varchar(10), Age Number, City Varchar(10));
+  
+  Alter Table Employee Add Constraint Pk_Id Primary Key (Id);
+  Or
+  ALTER TABLE Employee ADD PRIMARY KEY (Id);
+  
+  ****************************************Dropping Primary Key Using Alter Command*************************
+  Alter Table Employee Drop Primary Key;
+  Or
+  Alter Table Employee Drop Constraint Pk_Id;
+  
+  
+  ******************************Working With Composite Keys*************************************************
+  CREATE TABLE Employee (  Id  number, Name VARCHAR2(20),  Email  VARCHAR2(20),   Primary Key(Name, Email) );
+  
+  Desc Employee;
+Insert Into Employee (Id, Name, Email) Values (1, 'Jagdish', 'jagdish@g.com');
+Insert Into Employee (Id, Name, Email) Values (2, 'Jagdish', 'jagdish1@g.com');
+Insert Into Employee (Id, Name, Email) Values (3, 'Jagdish1', 'jagdish1@g.com'); // this will not get added has the combination of name and email are duplicated
+select * from employee;
+******************************************Unique Constraint*************************************
+   Drop Table Employee ;
+Create Table Employee (
+  Id  number UNIQUE,
+  Name VARCHAR(10),
+  Email VARCHAR(20) UNIQUE,
+  Department Varchar(10)
+);
+Insert Into Employee (Id, Name, Email, Department) Values (1, 'Jagdish', 'Jagdish@g.com', 'IT');
+INSERT INTO Employee (Id, Name, Email, Department) VALUES (1, 'Jagdish', 'Jagdish@g.com', 'IT'); // constraint violation
+*********************************************Not Null***********************************************
+Create Table Student (
+  StudentId number NOT NULL,
+  Name VARCHAR2(20) NOT NULL,
+  RegdNo VARCHAR2(10) NOT NULL,
+  Branch VARCHAR2(10) NOT NULL,
+  Mobile Varchar2(10)
+);
+    
+Insert Into Student Values (1, 'Jagdish', 'J101', 'CSE', '1111111111');
+Insert Into Student Values (2, 'Hegade', 'H101', 'CSE', Null);
+  Insert Into Student Values (4, Null, 'V101', 'CSE', '2222222222');
+  select * from student;
+  
+  **************************************************Working with Check Constraint*********************************
+  
+  drop table employees;
+  
+  Create Table Employees(
+   EmployeeID number CHECK(EmployeeID BETWEEN 100 AND 1000),
+   Name Varchar(20),
+   Age  Number Not Null Check (Age >= 18),
+   DeptID number CHECK(DeptID > 0 AND DeptID < 100),
+   Salary Number(10)
+);
+  
+  Insert Into Employees Values (100, 'Jagdish', 20, 1, 20000);
+  
+INSERT INTO Employees values (101, 'Hegade', 25, 2, 25000);
+INSERT INTO Employees values (10, 'Vandy', 20, 1, 20000);// here check violation constraint occurs.
+or table level check contraint
+Create Table Employees( Employeeid Number , Name Varchar(20), Age  Number ,Deptid Number, Salary Number(10),
+   CONSTRAINT CONSTRAINT_empID CHECK(Employeeid BETWEEN 100 AND 1000),
+   CONSTRAINT CONSTRAINT_AGE CHECK(AGE >= 18),
+   Constraint Constraint_Deptid Check(Deptid > 0 And Deptid < 100)
+);
+*******************************Composite Check Constraint *******************************
+drop table employees;
+CREATE TABLE Employees( PersonID number, NAME VARCHAR(20), AGE  number, DeptID number, SALARY NUMBER(10),
+   Constraint Constraint_Age_Deptid Check(Age >= 18 And Deptid > 0)
+);
+Insert Into Person Values (1, 'Jagdish', 20, 10, 1000); --Allowed
+Insert Into Person Values (2, 'Jagdish', 15, 20, 1000); -- NOT Allowed
+Insert Into Person Values (3, 'Jagdish', 22, 0, 1000); --NOT Allowed
+INSERT INTO Person VALUES (1, 'Jagdish', 15, 0, 1000); --Not Allowed
