@@ -117,3 +117,87 @@ Insert Into Person Values (1, 'Jagdish', 20, 10, 1000); --Allowed
 Insert Into Person Values (2, 'Jagdish', 15, 20, 1000); -- NOT Allowed
 Insert Into Person Values (3, 'Jagdish', 22, 0, 1000); --NOT Allowed
 INSERT INTO Person VALUES (1, 'Jagdish', 15, 0, 1000); --Not Allowed
+
+******************************Referentail Integrity Constraint *******************************
+Drop Table Department;
+Drop Table Employee
+//PARENT TABLE
+CREATE TABLE Department
+( 
+    Id   number  PRIMARY KEY, 
+    Name VARCHAR2(20), 
+    Location  Varchar2(20) 
+);
+//cHILD Table
+CREATE TABLE Employee 
+( 
+    ID  number PRIMARY KEY, 
+    Name  Varchar2(20), 
+    Salary Number, 
+    Departmentid number References Department(Id) 
+);
+Desc Department;
+Desc Employee;
+  Select * From User_Constraints Where Table_Name='EMPLOYEE';
+  
+INSERT INTO Department (Id, Name, Location) VALUES (10, 'IT', 'Hyderabad');
+Insert Into Department (Id, Name, Location) Values (20, 'HR', 'Delhi');
+INSERT INTO Department (Id, Name, Location) VALUES (30, 'Finance', 'Mumbai');
+Select * From Department;
+Insert Into Employee Values (101, 'Jagdish', 25000, 10); 
+Insert Into Employee Values (102, 'Hegade', 32000, 20); 
+INSERT into Employee VALUES (103, 'Vandy', 35000, 30);
+select * from employee;
+// Lets Try To Add Record Whose Id Doesnt Exist In Department Table
+Insert Into Employee Values (104, 'Jagdish', 52000, 40);
+Rules To Follow While Working With Foreign Key In Oracle
+Rule1:
+We Cannot Insert A Value Into The Foreign Key Column If That Value Is Not Existing 
+In The Reference Key Column Of The Parent (Master) Table
+Rule2:
+We Cannot Update The Reference Key Value Of A Parent Table If That The Value Has A Corresponding 
+Child Record In The Child Table Without Addressing What To Do With The Child Records
+Example,
+UPDATE Department SET Id = 100 WHERE Id = 10;
+Rule3:
+We Cannot Delete A Record From The Parent Table Provided That The Records Reference Key Value 
+Has A Child Record In The Child Table Without Addressing What To Do With The Child Record. 
+Example,
+DELETE FROM Department WHERE Id = 10;
+ALTER TABLE Employee1 ADD FOREIGN KEY (DepartmentId) REFERENCES Department(Id);
+*******************************Delete Rules In Oracle **********************************************
+Drop Table Employee;
+Commit;
+ON DELETE CASCADE: Whenever we are deleting a record from the parent table then
+that associated child records are deleted from the child table automatically.
+Create Table Employee(
+  Id number PRIMARY KEY,
+  Name Varchar2(20) Not Null,
+  DepartmentID number REFERENCES Department(Id) On Delete Cascade 
+);
+commit;
+Select * From Department;
+select  * from employee;
+desc employee;
+Insert Into Employee Values (102, 'Hegade', 20);
+INSERT into Employee VALUES (103, 'Vandy', 30);
+Delete From Department Where Id = 20;
+select * from department;
+Select * From Employee;
+Next With On Delete Set Null
+ON DELETE SET NULL: Whenever we are deleting a record from the parent table then that associated child records are set to null in the child table automatically.
+Drop Table Employee purge;
+Create Table Employee(
+  Id number PRIMARY KEY,
+  Name Varchar2(20) Not Null,
+  Departmentid Number References Department(Id) On Delete set null
+);
+Insert Into Department (Id, Name, Location) Values (40, 'IT', 'Hyderabad');
+Insert Into Department (Id, Name, Location) Values (50, 'HR', 'Delhi');
+Insert Into Department (Id, Name, Location) Values (60, 'Finance', 'Mumbai');
+Insert Into Employee Values (1011, 'Jagdish', 40);
+Insert Into Employee Values (1012, 'Hegade', 50);
+Insert Into Employee Values (1013, 'Vandy', 60);
+Select * From Department;
+Select * From Employee
+Delete From Department Where Id = 40;
