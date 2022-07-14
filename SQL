@@ -232,3 +232,10 @@ limit 1
  inner join pokemon_ability_data b
  on a.pokemonid =b.pokemonid
  
+//*****************************
+--  select 
+--  count(case when urban ='TRUE' then urban end)*100/count(*) as urban_cont,
+--  count(case when suburban ='TRUE' then urban end)*100/count(*) as Suburban_cont, 
+--  count(case when midurban ='TRUE' then urban end)*100/count(*) as midurban_cont,
+--  count(case when rural ='TRUE' then urban end)*100/count(*) as rural_cont
+--  from pokemongo_basedata 
