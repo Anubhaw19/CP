@@ -209,3 +209,26 @@ FLASHBACK TABLE <TABLE-NAME> TO BEFORE DROP;
 FLASHBACK TABLE <TABLE-NAME> TO BEFORE DROP RENAME TO <NEW-TABLE-NAME>
 // for flashback to work enable ROW Movement 
 ALTER TABLE <TABLE-NAME> ENABLE ROW MOVEMENT;
+
+
+
+
+//************************************************************ JOIN**************************
+
+-- select * from pokemon_ability_data limit 5;
+
+-- select * from pokemongo_basedata limit 5
+
+-- select count(pokemonid), pokemonid from pokemongo_basedata group by pokemonid order by count(pokemonid) desc
+
+-- select pokemon form pokemon_ability_data count(pokemonid), pokemonid from pokemongo_basedata group by pokemonid order by count(pokemonid) desc where pokemon_ability_data.pokemon 
+
+select a.pokemonid,pokemon,dodo from(
+select pokemonid,count(pokemonid) as dodo from pokemongo_basedata
+group by 1 
+order by dodo desc
+limit 1
+ )a
+ inner join pokemon_ability_data b
+ on a.pokemonid =b.pokemonid
+ 
