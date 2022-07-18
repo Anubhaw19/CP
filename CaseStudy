@@ -1,0 +1,11 @@
+CREATE TABLE transaction (
+  household_key integer,
+  BASKET_ID integer,
+  DAY integer,
+  PRODUCT_ID integer,
+  QUANTITY integer,
+  SALES_VALUE decimal,
+  STORE_ID integer,
+  RETAIL_DISC decimal,
+  WEEK_NO integer
+  )
