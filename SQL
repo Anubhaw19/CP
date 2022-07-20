@@ -239,3 +239,28 @@ limit 1
 --  count(case when midurban ='TRUE' then urban end)*100/count(*) as midurban_cont,
 --  count(case when rural ='TRUE' then urban end)*100/count(*) as rural_cont
 --  from pokemongo_basedata 
+//********************************************
+
+// question 17 
+ select A.user_id,A.booking_id, count(B.seat_id) as TOTAL_TICKETS
+ from
+ booking_details A, seatallocation B
+ where A.booking_id=B.booking_id
+ group by A.user_id, A.booking_id
+ having count(seat_id)=
+ (select max(count(seat_id)) from  booking_details A, seatallocation B
+ where A.booking_id=B.booking_id
+  group by A.user_id, A.booking_id);
+  
+  // question 19
+   select c.bus_name,c.dep_city,c.arr_city,c.no_of_bookings from
+(select b.bus_name,b.dep_city,b.arr_city,a.no_of_bookings from 
+(select bus_id,count(user_id) as no_of_bookings from booking_details
+group by bus_id
+order by 2) a inner join bus_service b on a.bus_id=b.bus_id
+order by 4 desc) c where c.no_of_bookings=
+(select max(no_of_bookings) from 
+(select bus_id,count(user_id) as no_of_bookings from booking_details
+group by bus_id));
+
+
