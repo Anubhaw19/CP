@@ -1,0 +1,128 @@
+//create or replace table test_product_src
+//  (
+//  product_cd        varchar(20),
+//  product_name      varchar(80),
+//  prod_category     varchar(20),
+//  prod_ind          varchar(20),
+//  prod_division     varchar(20),
+//  last_updated_date datetime
+//  );
+//
+//insert into test_product_src values ('AA01','VX7125 CORROSION','ZSLD','innovation','20',current_timestamp);
+// insert into test_product_src values ('AA02','CORROSION INHIBITOR','ZSLD','innovation','21',current_timestamp);
+// insert into test_product_src values ('BB01','COAGULANTS','YSLD','normal','22',current_timestamp);
+// insert into test_product_src values ('BB02','NONEMULSIFYING AGENT','YSLD','normal','23',current_timestamp);
+
+//select * from test_product_src;
+
+//create or replace table test_product_scd1
+//  (
+//  product_key       integer not null,
+//  product_cd        varchar(20) not null,
+//  product_name      varchar(80) not null,
+//  prod_category     varchar(20),
+//  prod_ind          varchar(20),
+//  prod_division     integer,
+//  create_datetime   datetime not null,
+//  update_datetime   datetime not null
+//  );
+
+//CREATE OR REPLACE SEQUENCE SEQ_01 START = 1 INCREMENT = 1;
+
+//select * from test_product_scd1;
+
+//MERGE INTO test_product_scd1 tgt_table
+//USING (
+//     SELECT
+//            product_cd   ,
+//            product_name ,
+//            prod_category,
+//            prod_ind     ,
+//            prod_division
+//     FROM   test_product_src
+//    )AS src_table        
+//    ON src_table.product_cd = tgt_table.product_cd --- natural key 
+//
+//WHEN MATCHED 
+//THEN UPDATE
+//SET  tgt_table.product_name = src_table.product_name
+//    ,tgt_table.prod_category = src_table.prod_category
+//    ,tgt_table.prod_ind = src_table.prod_ind
+//    ,tgt_table.prod_division = src_table.prod_division
+//    ,tgt_table.update_datetime = CURRENT_TIMESTAMP()
+//
+//WHEN NOT MATCHED
+//THEN
+//INSERT(
+//         tgt_table.product_key
+//        ,tgt_table.product_cd
+//        ,tgt_table.product_name
+//        ,tgt_table.prod_category
+//        ,tgt_table.prod_ind
+//        ,tgt_table.prod_division
+//        ,tgt_table.create_datetime
+//        ,tgt_table.update_datetime
+//)
+//VALUES(
+//         seq_01.NEXTVAL
+//        ,src_table.product_cd
+//        ,src_table.product_name
+//        ,src_table.prod_category
+//        ,src_table.prod_ind
+//        ,src_table.prod_division
+//        ,CURRENT_TIMESTAMP(3)
+//        ,CURRENT_TIMESTAMP(3)
+//);
+
+
+// updating unique records
+
+MERGE INTO test_product_scd1 tgt_table
+USING (
+     SELECT
+            product_cd   ,
+            product_name ,
+            prod_category,
+            prod_ind     ,
+            prod_division
+     FROM   test_product_src
+    )AS src_table        
+    ON src_table.product_cd = tgt_table.product_cd
+
+WHEN MATCHED 
+AND
+sha2_binary(to_varchar(nvl(tgt_table.product_name, '0')) || to_varchar(nvl(tgt_table.prod_category, '0')) 
+            || to_varchar(nvl(tgt_table.prod_ind, '0')) || to_varchar(nvl(tgt_table.prod_division, '0')))
+!= 
+sha2_binary(to_varchar(nvl(src_table.product_name, '0')) || to_varchar(nvl(src_table.prod_category, '0')) 
+            || to_varchar(nvl(src_table.prod_ind, '0')) || to_varchar(nvl(src_table.prod_division, '0')))
+
+THEN UPDATE
+SET  tgt_table.product_name = src_table.product_name
+    ,tgt_table.prod_category = src_table.prod_category
+    ,tgt_table.prod_ind = src_table.prod_ind
+    ,tgt_table.prod_division = src_table.prod_division
+    ,tgt_table.update_datetime = CURRENT_TIMESTAMP()
+
+WHEN NOT MATCHED
+THEN
+INSERT(
+         tgt_table.product_key
+        ,tgt_table.product_cd
+        ,tgt_table.product_name
+        ,tgt_table.prod_category
+        ,tgt_table.prod_ind
+        ,tgt_table.prod_division
+        ,tgt_table.create_datetime
+        ,tgt_table.update_datetime
+)
+VALUES(
+         seq_01.NEXTVAL
+        ,src_table.product_cd
+        ,src_table.product_name
+        ,src_table.prod_category
+        ,src_table.prod_ind
+        ,src_table.prod_division
+        ,CURRENT_TIMESTAMP(3)
+        ,CURRENT_TIMESTAMP(3)
+);
