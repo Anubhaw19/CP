@@ -1,0 +1,261 @@
+USE TREDENCESQL;
+
+CREATE TABLE COUNTRIES (
+COUNTRYID INT,
+COUNTRYSHORTNAME CHAR(2),
+COUNTRYFULLNAME VARCHAR(20)
+);
+
+SELECT * from Countries;
+
+INSERT INTO COUNTRIES VALUES (01,'US', 'U STATES');
+
+INSERT INTO COUNTRIES VALUES (02,'IN', 'INDIA');
+INSERT INTO COUNTRIES VALUES (03,'CH', 'CHINA');
+
+UPDATE COUNTRIES SET COUNTRYSHORTNAME  = 'USA' WHERE COUNTRYID = 1;
+
+delete from COUNTRIES WHERE COUNTRYID = 3;
+
+BEGIN;
+TRUNCATE COUNTRIES;
+ROLLBACK;
+
+Alter Table Countries alter Column COUNTRYSHORTNAME char(3); -- Microsoft SQL
+
+Alter Table dbo.Country alter Column Countryfullname Varchar(20); -- Microsoft SQL 
+
+Alter Table dbo.Country ADD  AlternateCountryname Varchar(20) ; -- Microsoft SQL
+ 
+Alter Table dbo.Country DROP COLUMN AlternateCountryname  ; -- Microsoft SQL
+
+ALter Table Country rename column Countrycode to areacode;-- does not work in SQL server  
+
+DROP TABLE COUNTRY ;
+
+
+
+CREATE TABLE dept
+(
+deptno INT PRIMARY KEY,
+dname VARCHAR(20),
+loc VARCHAR(10)
+);
+
+INSERT INTO dept VALUES (40,'ACCOUNTING','NEW YORK');	
+INSERT INTO dept VALUES (20,'RESEARCH','DALLAS');
+INSERT INTO dept VALUES (30,'SALES','CHICAGO');
+INSERT INTO dept VALUES (10,'OPERATIONS','BOSTON');
+
+
+CREATE TABLE emp
+(
+empno INT PRIMARY KEY,  -- combination of unique and not null
+ename VARCHAR(20) NOT NULL,  -- cannot leave blank
+job VARCHAR(10) DEFAULT 'CLERK',  -- if not job is entered SQL will put Clerk 
+mgr INT,
+hiredate DATE,
+sal DECIMAL(9,2) ,  -- check if salary is negative
+comm DECIMAL(7,2),
+deptno INT,
+CONSTRAINT FK_DEPTNO foreign key (deptno) references dept (deptno)  -- set foreign key constraint on the dept
+);
+
+INSERT INTO emp VALUES (7369,'SMITH','CLERK',7902,'1890-12-17',800,NULL,20);  
+INSERT INTO emp VALUES (7499,'ALLEN','SALESMAN',7698,'1981-02-20',1600,300,30);
+INSERT INTO emp VALUES (7521,'WARD','SALESMAN',7698,'1981-02-22',1250,500,30); 
+INSERT INTO emp VALUES (7566,'JONES','MANAGER',7839,'1981-04-02',2975,NULL,20);
+INSERT INTO emp VALUES (7654,'MARTIN','SALESMAN',7698,'1981-09-28',1250,1400,30);
+INSERT INTO emp VALUES (7698,'BLAKE','MANAGER',7839,'1981-05-01',2850,NULL,30);
+INSERT INTO emp VALUES (7782,'CLARK','MANAGER',7839,'1981-06-09',2450,NULL,10);
+INSERT INTO emp VALUES (7788,'SCOTT','ANALYST',7566,'1987-04-19',3000,NULL,20);
+INSERT INTO emp VALUES (7839,'KING','PRESIDENT',NULL,'1981-11-17',5000,NULL,10);
+INSERT INTO emp VALUES (7844,'TURNER','SALESMAN',7698,'1981-09-08',1500,0,30);
+INSERT INTO emp VALUES (7876,'ADAMS','CLERK',7788,'1987-05-23',1100,NULL,20);
+INSERT INTO emp VALUES (7900,'JAMES','CLERK',7698,'1981-12-03',950,NULL,30);  
+INSERT INTO emp VALUES (7902,'FORD','ANALYST',7566,'1981-12-03',3000,NULL,20);
+INSERT INTO emp VALUES (7934,'MILLER','CLERK',7782,'1982-01-23',1300,NULL,10);
+
+Exercise 1 : 
+
+create TABLE SALESPEOPLE(
+   snum int primary key,
+   sname varchar(20),
+   city varchar(20),
+   comm decimal(3,2) 
+);
+
+insert into SALESPEOPLE values (1001,'Peel','London',.12);
+insert into SALESPEOPLE values (1002,'Serres','San Jose',.13);
+insert into SALESPEOPLE values (1004,'Motika','London',.11);
+insert into SALESPEOPLE values (1007,'Rafkin','Barcelona',.15);
+insert into SALESPEOPLE values (1003,'Axelrod','New york',.1);
+
+create table orders(
+onum int primary key,
+amt decimal (7,2),
+odate date,
+cnum int ,
+snum int ,
+foreign key (Cnum) references cust (cnum),
+foreign key (snum) references SALESPEOPLE (snum)
+);
+insert into orders values(3001, 18.69, '1994-10-03', 2008, 1007);
+insert into orders values(3003, 767.19, '1994-10-03', 2001, 1001);
+insert into orders values(3002, 1900.10, '1994-10-03', 2007, 1004);
+insert into orders values(3005, 5160.45 , '1994-10-03', 2003, 1002);
+insert into orders values(3006, 1098.16, '1994-10-04', 2008, 1007);
+insert into orders values(3009, 1713.23 , '1994-10-04', 2002, 1003);
+insert into orders values(3007, 75.75 , '1994-10-05', 2004, 1002);
+insert into orders values(3008, 4723.00 , '1994-10-05', 2006, 1001);
+insert into orders values(3010, 1309.95  , '1994-10-06', 2004, 1002);
+insert into orders values(3011, 9891.88  , '1994-10-06', 2006, 1001);
+
+create table cust(
+cnum int primary key,
+cname varchar(20),
+city varchar (20),
+rating int,
+snum int,
+foreign key (snum) references salespeople (snum)
+);
+insert into cust values (2001, 'Hoffman', 'London', 100, 1001);
+insert into cust values (2002, 'Giovanne', 'Rome', 200, 1003);
+insert into cust values (2003, 'Liu', 'San Jose', 300, 1002);
+insert into cust values (2004, 'Grass', 'Berlin', 100, 1002);
+insert into cust values (2006, 'Clemens', 'London', 300, 1007);
+insert into cust values (2007, 'Pereira', 'Rome', 100, 1004);
+insert into cust values (2008, 'James', 'London', 200, 1007);
+
+
+Questions: 
+Write a Query that that selects highest rating in each city
+Write a Query that that selects each customer’s smallest order
+Write a Query that that counts all orders for October 10,90
+Write a Query that that counts no. of different cities in customer 
+Write a Query that that counts no. of salespeople registering orders for each date
+Write a Query that that selects largest order taken by each salesperson on each date.
+Modify above query to select only maximum purchase amount over 3000.
+Write a Query that that selects the first customer in alphabetical order whose name begin with G
+
+
+/////////////////////////////////////////////////////////////////////
+
+Joins :
+
+Write a query to match the salespeople to the customers according to the city they are living.
+Write a query to select the names of customers and the salespersons who are providing service to them.
+Write a query to find out all orders by customers not located in the same cities as that of their salespeople
+Write a query that lists each order number followed by name of customer who made that order
+Write a query that finds all pairs of customers having the same rating…………………
+Write a query to find out all pairs of customers served by a single salesperson………………..
+Write a query that produces all pairs of salespeople who are living in same city………………..
+
+
+
+Subqueries :
+
+Write a Query to find all orders credited to the same salesperson who services Customer 2008
+Write a Query to find out all orders that are greater than the average for Oct 4th
+Write a Query to find all orders attributed to salespeople in London
+Write a query to find all the customers whose cnum is 1000 above the snum of Serres. 
+Write a query to count customers with ratings above San Jose’s average rating.
+Write a query to show each salesperson with multiple customers.
+Write a query to show salesperson who has customer with highest order on given date
+Write a Query to increase the commission of all salespeople with total current orders above 3000.
+Write a Query to insert all salespeople with more than one customer into Sales Table.
+Write a Query to reduce the commission by 10% of the salespeople who have produced smallest order..
+Write a Query to increase the commission by 10% of all salespeople who have been assigned at least 2 customers.
+
+
+--Q1 Write a Query that that selects highest rating in each city
+select city,max(rating)
+from cust
+group by city;
+
+--Q2 Write a Query that that selects each customer’s smallest order
+select a.cnum,a.cname,min(b.amt)
+from cust a, orders b
+where a.cnum = b.cnum
+group by a.cnum,a.cname;
+
+--Q3 Write a Query that that counts all orders for October 10,90
+
+select count(*)
+from orders
+where odate = to_date('10-10-1990','DD-MM-YYYY');
+
+--Q4 Write a Query that that counts no. of different cities in customer 
+
+select count(distinct(city))
+from cust;
+
+--Q5 Write a Query that that counts no. of salespeople registering orders for each date
+
+select odate,count(distinct(snum)) as no_of_salespersons
+from orders
+group by odate;
+
+--Q6 Write a Query that that selects largest order taken by each salesperson on each date.
+
+select a.odate,a.snum,b.sname,max(a.amt) as max_order
+from orders a, salespeople b
+where a.snum=b.snum
+group by a.odate,a.snum,b.sname;
+
+--Q7 Modify above query to select only maximum purchase amount over 3000.
+
+select a.odate,a.snum,b.sname,max(a.amt) as max_order
+from orders a, salespeople b
+where a.snum=b.snum
+group by a.odate,a.snum,b.sname
+having max_order > 3000;
+
+--Q8 Write a Query that that selects the first customer in alphabetical order whose name begin with G
+
+select cname
+from cust
+where upper(cname) like 'G%'
+order by cname
+limit 1;
+
+
+
+--Write a query to match the salespeople to the customers according to the city they are living.
+select c.cname , s.sname ,c.city from cust c , salespeople s
+where c.snum = s.snum
+and c.city = s.city;
+
+select c.cname , s.sname , c.city from cust c full outer join salespeople s
+on c.snum = s.snum
+where c.city = s.city;
+
+--Write a query to select the names of customers and the salespersons who are providing service to them.
+select c.cname ,s.sname from cust c , salespeople s
+where c.snum = s.snum ;
+
+
+--Write a query to find out all orders by customers not located in the same cities as that of their salespeople
+select o.onum ,c.city,s.city from orders o , cust c, salespeople s 
+where o.cnum = c.cnum 
+And o.snum = s.snum
+And c.city != s.city
+
+--Write a query that lists each order number followed by name of customer who made that order
+select o.onum ,c.cname from orders o , cust c
+where o.cnum = c.cnum ;
+
+--Write a query that finds all pairs of customers having the same rating…………………
+select a.cname , b.cname ,a.rating from cust a , cust b
+where a.rating = b.rating
+and a.cnum < b.cnum;
+
+--Write a query to find out all pairs of customers served by a single salesperson………………..
+select a.cname , b.cname ,a.snum from cust a , cust b
+where a.snum = b.snum
+and a.cnum < b.cnum;
+
+--Write a query that produces all pairs of salespeople who are living in same city………………..
+select a.sname , b.sname ,a.city from salespeople a , salespeople b
+where a.city = b.city
+and a.snum < b.snum;
