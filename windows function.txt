@@ -1,0 +1,28 @@
+-- Online SQL Editor to Run SQL Online.
+-- Use the editor to create new tables, insert data and all other SQL operations. 
+
+--SELECT *,rank() over(partition by item order by amount desc) as rank,
+--dense_rank() over(partition by item order by amount desc) as dense_rank FROM orders ;
+
+select * ,lag(amount,1,0) over(partition by  item order by order_id) as lag_amount,
+lead(amount,1,0) over(partition by  item order by order_id) as lead_amount,
+case 
+when o.amount >lag(amount,1,0) over(partition by  item order by order_id) then "greater"
+when o.amount <lag(amount,1,0) over(partition by  item order by order_id) then "less"
+when o.amount =lag(amount,1,0) over(partition by  item order by order_id) then "equal"
+end compare_amount
+from orders o;
+  
+--SELECT *,row_number() over(partition by item order by customer_id asc) as rn FROM orders;
+
+--insert into orders values(10,'Keyboard',500,2);
+--insert into orders values(6,'Keyboard',300,1);
+--insert into orders values(7,'Monitor',900,3);
+--insert into orders values(8,'Mouse',200,4);
+--insert into orders values(9,'Mousepad',600,1);
+
+--select * from (
+--SELECT *,rank() over(partition by item order by amount desc) as rank FROM ---orders
+ -- ) x where x.rank=1;
+ 
+ 
