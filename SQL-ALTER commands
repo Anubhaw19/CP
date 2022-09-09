@@ -1,0 +1,48 @@
+create table customers(
+id int,
+    first_name varchar,
+    last_name varchar,
+    age int,
+    email varchar
+);
+COPY customers FROM 'C:\Users\anubhaw.sharma\Downloads\copy.csv' DELIMITER ',' csv HEADER;
+COPY customers FROM 'C:\Users\anubhaw.sharma\Downloads\copytext.txt' DELIMITER ',' ;
+
+INSERT INTO customers values(1,'anubhaw','sharma',22,'abc@xyz.com'),(2,'subham','sharma',22,'pqr@xyz.com');
+
+
+
+--ADD COLUMNS
+ALTER TABLE customers ADD COLUMN address VARCHAR(20);
+ALTER TABLE customers ADD gender varchar;
+ALTER TABLE customers ADD amount int;
+
+--DELETE COLUMN
+ALTER TABLE customers DROP gender;
+
+--CHANGE DATA TYPE of COLUMN
+ALTER TABLE customers ALTER COLUMN age TYPE VARCHAR(2);
+ALTER TABLE customers ALTER COLUMN first_name TYPE VARCHAR(30);
+
+--RENAME COLUMN
+ALTER TABLE customers RENAME COLUMN last_name TO surname;
+
+-- SET CONSTRAINTS
+ALTER TABLE customers ALTER COLUMN id SET NOT NULL;
+INSERT INTO customers(id,first_name,surname,age,email) VALUES(3,'mahesh','kumar',23,'him@xyz.com');
+
+-- DROP CONSTRAINTS
+ALTER TABLE customers ALTER COLUMN id DROP NOT NULL;
+
+
+--CHECK CONSTRAINTS
+ALTER TABLE customers ADD CONSTRAINT amount CHECK (amount>0);
+INSERT INTO customers(first_name,surname,age,email,amount) VALUES('mahesh','kumar',23,'him@xyz.com',-1);
+
+--ADD PRIMARY KEY
+ALTER TABLE customers ADD PRIMARY KEY (id);
+
+--ADD FOREIGN KEY
+ALTER TABLE "child_table" ADD CONSTRAINTS "child_column" FOREIGN KEY ("parent_column") REFERENCES "parent_table";
+
+SELECT * FROM customers;
