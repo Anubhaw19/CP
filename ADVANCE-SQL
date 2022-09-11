@@ -175,3 +175,90 @@ CASCADE;
 
 DROP INDEX IF EXISTS month_index
 RESTRICT;
+
+
+--TRIM
+
+SELECT TRIM(LEADING ' ' FROM '    anubhaw sharma          ');
+
+SELECT TRIM(TRAILING ' ' FROM '      anubhaw sharma          ');
+
+SELECT TRIM(BOTH ' ' FROM '       anubhaw sharma          ');
+
+SELECT TRIM ('   anubhaw   ',' ');
+SELECT LTRIM('    anubhaw    ',' ');
+SELECT RTRIM('    anubhaw    ',' ');
+
+
+--CONCATENATION
+
+SELECT customer_name, city || ',' || state || '-' ||country AS address FROM customer;
+
+--SUBSTRING
+
+SELECT 
+customer_id,
+customer_name,
+SUBSTRING(customer_id  FOR 2) AS sub_group,
+SUBSTRING(customer_id FROM 4 FOR 5) AS customer_number
+FROM customer
+WHERE SUBSTRING(customer_id FOR 2)='AB';
+
+-- LIST AGGREGATION
+
+SELECT 
+order_id,
+STRING_AGG(product_id,' , ') AS produtcs,
+FROM sales
+GROUP BY order_id
+ORDER BY order_id;
+
+
+--RANDOM NUMBER
+SELECT RANDOM();
+
+SELECT (RANDOM()*10)+10;
+
+SELECT SETSEED(0.5);
+
+SELECT RANDOM(); --0.46
+SELECT RANDOM(); --0.22773
+
+SELECT SETSEED(0.5);
+
+SELECT RANDOM();
+SELECT RANDOM();
+
+
+--DATE and TIME
+
+SELECT 
+CURRENT_DATE,
+CURRENT_TIME,
+CURRENT_TIME(1),
+CURRENT_TIME(3),
+CURRENT_TIMESTAMP;
+
+--AGE
+
+SELECT AGE('2015-02-01','2013-06-13');
+
+SELECT 
+AGE(ship_date,order_date) AS duration
+FROM sales;
+
+
+-- EXTRACT
+
+SELECT CURRENT_TIMESTAMP, EXTRACT(DAY FROM CURRENT_TIMESTAMP);
+
+SELECT CURRENT_TIMESTAMP, EXTRACT(MINUTE FROM CURRENT_TIMESTAMP);
+
+SELECT CURRENT_TIMESTAMP, EXTRACT(HOUR FROM CURRENT_TIMESTAMP);
+
+-- DATE in Seconds using EXTRACT-EPOCH
+
+SELECT order_date,ship_date, 
+EXTRACT(EPOCH FROM ship_date)-EXTRACT(EPOCH FROM order_date) AS minutes_taken 
+FROM sales;
+
