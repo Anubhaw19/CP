@@ -1,0 +1,154 @@
+SELECT * FROM customer;
+
+SELECT * FROM product;
+
+SELECT * FROM sales;
+
+SELECT * FROM sales WHERE ship_date BETWEEN '2015-02-01' AND '2016-01-01';
+
+SELECT customer_name FROM customer WHERE customer_name LIKE '_o__ %';
+
+SELECT segment, count(*) from customer GROUP BY segment;
+
+SELECT * ,
+CASE 
+WHEN age<30 THEN 'young'
+WHEN age>60 THEN 'senior citizen'
+ELSE 'middle age'
+END AS age_category
+FROM customer;
+
+SELECT count(*) FROM sales;
+
+
+CREATE TABLE sale_2015 as SELECT * FROM sales WHERE ship_date BETWEEN '2015-01-01' AND '2015-12-31';
+
+SELECT  COUNT (DISTINCT customer_id) FROM sale_2015;
+
+CREATE TABLE customer_20_60 AS SELECT * FROM customer WHERE age BETWEEN 20 AND 60;
+
+SELECT COUNT(*) FROM customer_20_60;
+
+
+SELECT * FROM sale_2015;
+SELECT * FROM customer_20_60;
+
+--INTERSECT
+SELECT customer_id FROM customer_20_60
+INTERSECT
+SELECT customer_id FROM sale_2015;
+
+--EXCEPT
+
+SELECT customer_id FROM customer_20_60
+EXCEPT
+SELECT customer_id FROM sale_2015;
+
+--UNION
+SELECT customer_id FROM customer_20_60
+UNION
+SELECT customer_id FROM sale_2015;
+
+--UNION ALL : (for including Duplicate values) - EXCEPT ALL, INTERSECT ALL
+
+SELECT customer_id FROM customer_20_60
+UNION ALL
+SELECT customer_id FROM sale_2015;
+
+SELECT * FROM product;
+
+SELECT * FROM sales;
+
+SELECT * FROM customer;
+
+
+SELECT 
+a.product_id,
+a.category,
+a.product_name,
+b.quantity
+ FROM product AS a
+ LEFT JOIN 
+ (SELECT product_id, SUM(quantity) AS quantity FROM sales GROUP BY product_id) AS b
+ ON a.product_id=b.product_id
+ ORDER BY b.quantity DESC;
+ 
+ 
+ SELECT 
+ order_line,
+ customer_id,
+ (SELECT customer_name FROM customer WHERE customer.customer_id=sales.customer_id)
+ FROM sales;
+ 
+ 
+  /*  all column from sales table
+  customer_name, age 
+  product_name, category
+*/ 
+ 
+ 
+ SELECT *, 
+ (SELECT customer_name FROM customer WHERE customer.customer_id=sales.customer_id) AS customer_name,
+ (SELECT age FROM customer WHERE customer.customer_id=sales.customer_id ) AS age,
+ (SELECT product_name FROM product WHERE product.product_id=sales.product_id) AS product,
+ (SELECT category FROM product WHERE product.product_id=sales.product_id )
+ FROM sales;
+ 
+ 
+ SELECT a.*,
+ b.customer_name,
+ b.age
+ FROM sales AS a 
+ JOIN
+ customer AS b
+ ON a.customer_id=b.customer_id;
+
+
+  /*  all column from sales table
+  customer_name, age 
+  product_name, category
+  
+  JOIN within Sub-Queries
+  
+*/ 
+ 
+ 
+  SELECT a.*,
+ b.customer_name,
+ b.age
+ FROM 
+ customer AS b
+ JOIN 
+ (SELECT 
+  a.*,
+  b.product_name,
+  b.category 
+  FROM sales AS a 
+  JOIN product AS b
+ ON a.product_id=b.product_id) AS a
+ ON a.customer_id=b.customer_id;
+ 
+ 
+ -- VIEW
+ 
+ CREATE OR REPLACE VIEW logistics AS
+ SELECT 
+ a.order_line,
+ a.order_id,
+ b.customer_name,
+ b.city,
+ b.country
+ FROM sales AS a
+ LEFT JOIN customer AS b
+ ON a.customer_id=b.customer_id
+ ORDER BY a.order_line;
+ 
+ 
+ SELECT * FROM logistics;
+ -- DROP a VIEW
+ DROP VIEW logistics;
+ 
+ --UPDATE VIEW ( directly update TABLE instead of VIEW)
+UPDATE logistics 
+SET country='US'
+WHERE country='United States';
