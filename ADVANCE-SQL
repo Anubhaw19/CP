@@ -262,3 +262,22 @@ SELECT order_date,ship_date,
 EXTRACT(EPOCH FROM ship_date)-EXTRACT(EPOCH FROM order_date) AS minutes_taken 
 FROM sales;
 
+--CTE (Common Table Expression)
+WITH cte_user AS (
+    SELECT * FROM customer)
+SELECT * FROM cte_user;
+
+
+WITH 
+cte_customer AS( 
+SELECT customer_id, customer_name,age from  customer
+),
+cte_sales AS (
+SELECT order_id,customer_id, COUNT(*) AS num_order 
+FROM sales GROUP BY 1,2
+)
+
+SELECT customer_id,customer_name,num_order 
+FROM cte_sales
+JOIN cte_customer
+USING(customer_id);
