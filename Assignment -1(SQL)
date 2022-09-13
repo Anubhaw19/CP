@@ -1,0 +1,212 @@
+--creating Table -"film"
+
+CREATE TABLE film(
+film_id	INT,
+title	VARCHAR,
+description	 VARCHAR,
+release_year	INT,
+language_id	INT,
+rental_duration	INT,
+rental_rate	DECIMAL,
+length_id	INT,
+replacement_cost	DECIMAL,
+rating	VARCHAR,
+special_features	VARCHAR,
+last_update  DATE
+);
+
+
+
+--creating Table -"customer"
+
+CREATE TABLE customer(
+    customer_id INT,
+    store_id INT,
+    first_name VARCHAR,
+    last_name VARCHAR,
+    email VARCHAR,
+    address_id INT,
+    active INT,
+    create_date DATE,
+    last_update DATE
+);
+
+
+
+-- 1.	Find the total number of active customers for the stores present in the dataset. (use group by and count function). 
+
+SELECT 
+store_id,
+count(customer_id) AS active_customers
+FROM customer
+WHERE active=1
+GROUP BY store_id;
+
+
+
+/* 
+2.	Create a table with first name, last name, address ID and customer ID for all active customers whose first name and last name start with the same letter. (use ddl, dcl functions wherever necessary).
+*/
+
+CREATE TABLE spl_customer AS
+SELECT 
+first_name,
+last_name,
+address_id,
+customer_id
+FROM customer 
+WHERE SUBSTRING(first_name FOR 1)=SUBSTRING(last_name FOR 1) 
+AND active=1;
+
+
+--  From the Dataset Films:
+
+-- 1.	Find out what is the most common rental duration for movies with rental revenue generated across these different durations. 
+
+
+SELECT 
+rental_duration, count(*) ,sum(rental_rate)*rental_duration AS revenue
+FROM film 
+GROUP BY 1
+ORDER BY 2 DESC;
+
+
+/* 
+2.	Assuming the rental place considers a duration of four days before going for a replacement and doesn’t charge rent beyond that. What would be the net incurred rent or replacement cost for different special features present in movie. (Also show the rent received and replacement charges for each). 
+*/
+
+
+SELECT special_features,
+SUM(rental_rate*4) AS net_rent ,SUM(replacement_cost) AS net_replacement_cost,
+SUM(rental_rate*4)+SUM(replacement_cost) AS total_cost
+FROM film GROUP BY 1;
+
+
+/*
+3.	A movie production house would like to know the ideal duration, which yields most revenue across different ratings. (Mention assumptions if any).
+
+assumption : Revenue = SUM(rental_rate*rental_duration)
+*/
+
+
+SELECT rating , rental_duration , SUM(rental_rate)*rental_duration AS revenue 
+FROM film
+GROUP BY 1,2
+ORDER BY 1,3 DESC;
+
+
+/*
+4.	Create a new table to get film title, description, release year, rating. For each row populated get the total rental duration based on the rating as a separate column. (use windows functions).
+*/
+
+CREATE TABLE spl_film AS
+SELECT title, description, release_year,rating,
+SUM(rental_duration) OVER(PARTITION BY rating) AS total_rental_duration
+FROM film;
+
+
+
+--SECTION 2
+
+--a)	Get Full name, Address and State ID and Pin Code combination as given below
+
+SELECT 
+name  || ' '|| surname AS fullname,
+streetaddress ||','||city AS address,
+state||'-'||zipcode AS pincode
+FROM owners;
+
+
+--b)	Find out the number of owners whose first name starts with the letter ‘S’ or ‘s’
+
+SELECT COUNT(ownerid) 
+FROM owners
+WHERE LOWER(name) LIKE 's%';
+
+
+--c)	List out the address of all the owners whose name starts with ‘M’ or ‘m’
+
+SELECT name ,streetaddress 
+FROM owners
+WHERE LOWER(name) LIKE 'm%';
+
+
+--d)	Display the name of the owners who has more than 12 characters in its name (without space).
+
+SELECT name ||' '||surname AS fullname FROM owners
+WHERE LENGTH(name ||' '||surname)>13;
+
+
+
+--  2. Use the Table Pets:
+
+-- b)  Display the number of males and female pets for every pet kind as shown below:
+
+SELECT kind, 
+COUNT (CASE gender
+      WHEN 'male' THEN 1 ELSE NULL END ) AS male,
+COUNT (CASE gender
+      WHEN 'female' THEN 1 ELSE NULL END ) AS female      
+FROM pets
+GROUP BY 1;
+
+
+-- c) Display the count of pets by each gender and kind as shown below:
+
+SELECT kind ,count(*) FROM pets GROUP BY 1
+UNION
+SELECT gender,count(*) FROM pets GROUP BY 1;
+
+
+
+
+
+--3. Use the Procedure History Table:
+
+--a) Extract Day, month, and year from the column date for every period:
+
+SELECT petid, EXTRACT(DAY FROM date) AS day,
+EXTRACT(MONTH FROM date) AS month,
+EXTRACT(YEAR FROM date) AS year
+FROM procedurehist;
+
+
+
+-- b) Extract the count of distinct Pet IDs for each of the Weekday:
+
+SELECT 
+CASE EXTRACT(DOW FROM date)
+WHEN 0 THEN 'Sunday'
+WHEN 1 THEN 'Monday'
+WHEN 2 THEN 'Tuesday'
+WHEN 3 THEN 'Wednesday'
+WHEN 4 THEN 'Thursday'
+WHEN 5 THEN 'Friday'
+WHEN 6 THEN 'Saturday'
+ELSE NULL
+END AS Weekday
+,COUNT(DISTINCT petid) FROM procedurehist
+GROUP BY 1;
+
+
+--4.  Use the procedure type table:
+
+/*
+Update proceduretype SET price = NULL where price < 100;
+a)	Replace null values with 100 and display the distinct procedure type and items price:
+*/
+
+UPDATE proceduretype SET price = 100 where price IS NULL;
+
+SELECT  proceduretype, SUM(price) as price FROM proceduretype GROUP BY 1;
+
+
+--a.	CAST every column as text and display the whole table as below:
+
+SELECT CAST(proceduretype AS TEXT),
+CAST(proceduresubcode AS TEXT),
+CAST(description AS TEXT),
+CAST(price AS TEXT)
+FROM proceduretype;
+
+
