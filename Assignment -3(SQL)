@@ -1,0 +1,160 @@
+-- Q1. Find out the names of the cities and venues in which team - 'Royal Challengers Bangalore'  played their matches?
+
+SELECT city ,venue FROM matches
+WHERE team1='Royal Challengers Bangalore' OR  team2='Royal Challengers Bangalore'
+GROUP BY 1,2;
+
+
+
+-- Q2. list out below details of a batsman who has most runs in IPL history?(round the batting_average upto 2 decimal)
+
+SELECT 
+batsman ,
+COUNT(DISTINCT match_id) AS total_innings ,
+SUM(batsman_runs) AS total_runs,
+CAST(CAST (SUM(batsman_runs) AS DECIMAL(10,2))/CAST(COUNT(DISTINCT match_id)AS DECIMAL(10,2))AS DECIMAL(10,2) )AS batting_average
+FROM deliveries
+GROUP BY 1
+;
+
+
+-- Q3. list out top 10 unique batsman based on number of centuries they made?(batsman_runs >=100 in a single match) 
+
+WITH cte_runs AS(
+SELECT batsman,match_id,
+SUM(batsman_runs) AS total_runs
+FROM deliveries
+GROUP BY 1,2
+ORDER BY 1,2
+)
+
+ SELECT batsman,
+COUNT(CASE WHEN total_runs >=50 AND total_runs<100   THEN 1 ELSE NULL END) AS "50s",
+COUNT(CASE WHEN total_runs >=100 THEN 1 ELSE NULL END) AS "100s"
+FROM cte_runs
+ GROUP BY 1
+ ORDER BY 3 DESC,2 DESC 
+ LIMIT 10;
+ 
+ 
+ 
+-- Q4. Find out name of IPL winners in each season?
+ 
+ SELECT x.season,x.winner FROM(
+SELECT  season,winner,COUNT(id) AS "wins",
+RANK() OVER(PARTITION BY season ORDER BY COUNT(id) DESC) AS rnk
+FROM matches
+GROUP BY 1,2
+ORDER BY 1,3 DESC
+    ) AS x WHERE x.rnk=1;
+ 
+/*
+Q5. Name the bowler with best bowling figures in IPL history.( most wicket in a match with least run) (also read point 3 in 'Instruction' tab)
+*/
+ 
+ WITH cte_ball AS(
+SELECT 
+match_id,
+bowler, 
+COUNT(CASE WHEN player_dismissed <>'' THEN 1 ELSE NULL END) AS wickets,
+SUM(total_runs) AS run
+FROM deliveries
+GROUP BY 1,2
+ORDER BY  3 DESC,4 
+)
+SELECT a.season,a.city,a.venue,b.bowler,b.wickets||'-'||b.run AS best_figures
+FROM matches AS a JOIN (SELECT * FROM cte_ball LIMIT 1) AS b
+ON a.id=b.match_id;
+
+
+
+/*
+Q6. list out batsman name, run and team name of player who wore orange cap  in each season? (batsman having highest run in a season wears orange cap)
+*/
+
+
+WITH cte_batsman AS (
+ SELECT match_id,batting_team,batsman,SUM(batsman_runs) AS runs
+ FROM deliveries
+ GROUP BY 1,2,3
+ ORDER BY 4 DESC
+)
+SELECT x.* FROM (
+SELECT a.season,b.batting_team,b.batsman,SUM(b.runs) AS runs ,
+RANK() OVER(PARTITION BY season ORDER BY SUM(b.runs) DESC) AS rnk
+FROM matches AS a
+JOIN cte_batsman AS b ON 
+a.id=b.match_id
+GROUP BY 1,2,3
+    ) AS x WHERE x.rnk=1;
+    
+    
+    
+-- Q7. Which team won by highest margin in each season ? (Note: 1 Wicket is equivalent to 10 runs)    
+
+
+SELECT x.* FROM (
+SELECT season,winner,
+CASE
+WHEN MAX(win_by_runs)>MAX(win_by_wickets*10)  THEN (MAX(win_by_runs) || ' runs') ELSE MAX(win_by_wickets)||' wickets' END AS winning_type
+,DENSE_RANK() OVER(PARTITION BY season ORDER BY
+             CASE WHEN MAX(win_by_runs)>MAX(win_by_wickets*10) THEN MAX(win_by_runs) ELSE MAX(win_by_wickets*10) END
+             DESC) AS rnk
+FROM matches
+GROUP BY 1,2
+ORDER BY 1
+) AS x
+WHERE x.rnk=1;
+
+
+-- Q8. Create a list of teams with their winning ratio (winning ratio= total no. of matches won/total no. of matches played)
+-- Order them by descending order in term of winning ratio. winning ratio must be upto 2 decimal.
+
+
+WITH cte_match AS(
+SELECT x.team,SUM(x.matches) as total_matches FROM
+(
+SELECT team1 AS team ,COUNT(team1) AS matches FROM matches
+GROUP BY 1
+UNION 
+SELECT team2,COUNT(team2) FROM matches
+GROUP BY 1
+    ) AS x
+    GROUP BY 1)
+    
+SELECT 
+a.team,
+a.total_matches,
+b.wins,
+a.total_matches-b.wins AS lost,
+CAST(b.wins*100/a.total_matches AS DECIMAL(10,2)) || '%' AS win_ratio
+FROM cte_match AS a
+INNER JOIN     
+(SELECT winner ,COUNT(winner) AS wins FROM matches GROUP BY 1) AS b
+ON a.team=b.winner
+ORDER BY 5 DESC;
+    
+
+ 
+ -- Q9. find out season,match id, bowler name, against which team and the venue where bowlers took hat-trick? 
+ --(also read point 3 and point 4 in 'Instruction' tab)
+
+SELECT y. match_id, y.inning_id, COUNT(y.ball_rnk) FROM(
+SELECT x.* ,
+DENSE_RANK() OVER(PARTITION BY x.inning_id ORDER BY x.ball_id ) AS ball_rnk
+FROM (
+SELECT
+match_id,
+CAST(match_id ||'' ||inning|| '' ||over_number AS INTEGER ) AS inning_id,
+CAST(over_number ||'' || ball AS INTEGER) AS ball_id,
+batting_team,
+bowler
+FROM deliveries
+WHERE dismissal_kind NOT IN('','retired hurt','run out')
+    ) AS x
+    ) AS y
+    GROUP BY 1,2
+    HAVING COUNT(y.ball_rnk)=3
+    ;
+
+    // TODO: unable to build logic for hat-trick  calculation
